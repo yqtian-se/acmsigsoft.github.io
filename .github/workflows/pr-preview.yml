@@ -24,7 +24,6 @@ jobs:
     runs-on: ubuntu-latest
     env:
       HUGO_VERSION: 0.148.2
-      PREVIEW_BASE_URL: https://www2.sigsoft.org/pr-${{ github.event.pull_request.number }}
     steps:
       - name: Install Hugo CLI
         run: |
@@ -40,6 +39,10 @@ jobs:
             "https://github.com/sass/dart-sass/releases/download/${DART_SASS_VERSION}/dart-sass-${DART_SASS_VERSION}-linux-x64.tar.gz"
           tar -xf /tmp/dart-sass.tar.gz -C /tmp
           echo "/tmp/dart-sass" >> "$GITHUB_PATH"
+
+      - name: Setup Pages
+        id: pages
+        uses: actions/configure-pages@v6
 
       # This is untrusted fork code, but this workflow has no secrets or write permissions.
       - name: Checkout PR branch
@@ -59,6 +62,7 @@ jobs:
         env:
           HUGO_ENVIRONMENT: production
           HUGO_ENV: production
+          PREVIEW_BASE_URL: ${{ steps.pages.outputs.base_url }}/pr-${{ github.event.pull_request.number }}
         run: |
           hugo \
             --source pr \
@@ -75,7 +79,7 @@ jobs:
       - name: Check internal links
         working-directory: pr
         env:
-          SITE_BASE_URL: ${{ env.PREVIEW_BASE_URL }}/
+          SITE_BASE_URL: ${{ steps.pages.outputs.base_url }}/pr-${{ github.event.pull_request.number }}/
           PUBLIC_DIR: ${{ github.workspace }}/preview-public
           LINK_CHECK_BASE_REF: origin/${{ github.base_ref }}
         run: node scripts/check-changed-links.mjs
