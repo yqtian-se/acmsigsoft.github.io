@@ -33,7 +33,6 @@ jobs:
     runs-on: ubuntu-latest
     env:
       HUGO_VERSION: 0.148.2
-      SITE_BASE_URL: https://www2.sigsoft.org
     environment:
       name: github-pages
       url: ${{ steps.metadata.outputs.preview_url }}
@@ -46,10 +45,15 @@ jobs:
           run-id: ${{ github.event.workflow_run.id }}
           github-token: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Setup Pages
+        id: pages
+        uses: actions/configure-pages@v6
+
       - name: Validate deployment metadata
         id: metadata
         env:
           PREVIEW_ROOT: ${{ runner.temp }}/preview
+          SITE_BASE_URL: ${{ steps.pages.outputs.base_url }}
         run: |
           test -d "$PREVIEW_ROOT/preview-public"
           test -f "$PREVIEW_ROOT/metadata/pr-number"
@@ -90,6 +94,7 @@ jobs:
         env:
           HUGO_ENVIRONMENT: production
           HUGO_ENV: production
+          SITE_BASE_URL: ${{ steps.pages.outputs.base_url }}
         run: |
           hugo \
             --source base \
