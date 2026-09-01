@@ -25,6 +25,10 @@ SEN contributions are archived in the ACM Digital Library and accessible through
 
 Jacopo Soldani, University of Pisa, Italy
 
+### Incoming Editor-in-Chief (from 2027)
+
+Yongqiang Tian, Monash University
+
 ### Production Editor
 
 Ajay Jain, Adobe Systems Inc.
